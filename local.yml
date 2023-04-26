@@ -1,0 +1,50 @@
+version: '3'
+
+volumes:
+  budget_tracker_local_postgres_data: {}
+  budget_tracker_local_postgres_data_backups: {}
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: budget_tracker_local_django
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+    ports:
+      - '8001:8001'
+    command: /start
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: budget_tracker_production_postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - budget_tracker_local_postgres_data:/var/lib/postgresql/data
+      - budget_tracker_local_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.local/.postgres
+
+  docs:
+    image: budget_tracker_local_docs
+    build:
+      context: .
+      dockerfile: ./compose/local/docs/Dockerfile
+    env_file:
+      - ./.envs/.local/.django
+    volumes:
+      - ./docs:/docs:z
+      - ./config:/app/config:z
+      - ./budget_tracker:/app/budget_tracker:z
+    ports:
+      - '9000:9000'
+    command: /start-docs

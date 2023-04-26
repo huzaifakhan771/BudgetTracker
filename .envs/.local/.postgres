@@ -1,0 +1,8 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=budget_tracker
+POSTGRES_USER=budget_tracker
+POSTGRES_PASSWORD=temppass123
+DATABASE_URL=postgres://budget_tracker:temppass123@postgres:5432/budget_tracker
