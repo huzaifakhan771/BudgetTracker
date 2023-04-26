@@ -24,7 +24,7 @@ class Contributions(TimeStampedModel):
 
 class Expenses(TimeStampedModel):
     added_by = models.CharField(max_length=25)
-    date_added = models.DateField(default=datetime.datetime.now().date())
+    date_added = models.DateField(default=datetime.date.today)
     item_name = models.CharField(max_length=255)
     item_price = models.PositiveIntegerField()
     item_quantity = models.PositiveIntegerField(default=1)
