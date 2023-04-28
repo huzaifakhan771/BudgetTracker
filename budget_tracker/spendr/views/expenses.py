@@ -8,7 +8,7 @@ from budget_tracker.spendr.models import Expenses
 from budget_tracker.spendr.utils import aggregate_expenses_qs, get_expenses_initial_query, is_invalid_date
 
 
-class ListCreateContributor(APIView):
+class ListCreateExpenses(APIView):
     """
     View to list, create, or delete contributors.
     """
