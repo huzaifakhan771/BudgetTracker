@@ -1,12 +1,13 @@
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db.models import CharField, Func, Sum, Value
 from django.db.models.functions import Cast, Concat, ExtractMonth, ExtractYear, LPad
-from drf_spectacular.utils import OpenApiParameter, extend_schema
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from budget_tracker.spendr.models import Contributions, Contributors
+from budget_tracker.spendr.swagger_constants import SwaggerParams
 from budget_tracker.spendr.utils import (
     aggregate_contributions_qs,
     get_contribution_initial_query,
@@ -21,12 +22,11 @@ class ListCreateContribution(APIView):
     """
 
     @extend_schema(
-        operation_id="contribution",
-        tags=["Contribution"],
+        tags=["Contributions"],
         parameters=[
-            OpenApiParameter(name="contributor", description="contributor", type=str),
-            OpenApiParameter(name="year", description="year", type=str),
-            OpenApiParameter(name="month", description="month", type=str),
+            SwaggerParams.CONTRIBUTOR,
+            SwaggerParams.START_YEAR_MONTH,
+            SwaggerParams.END_YEAR_MONTH,
         ],
     )
     def get(self, request):
@@ -71,7 +71,18 @@ class ListCreateContribution(APIView):
 
         return Response({"response": response_dict}, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        tags=["Contributions"],
+        parameters=[
+            SwaggerParams.CONTRIBUTOR,
+            SwaggerParams.MONTH,
+            SwaggerParams.CONTRIBUTION,
+        ],
+    )
     def post(self, request):
+        """
+        Add a contribution with the contributor name.
+        """
         query_params = request.query_params
 
         contributor = query_params.get("contributor")
@@ -103,7 +114,16 @@ class ListCreateContribution(APIView):
 
         return Response({"message": response}, status=status_)
 
+    @extend_schema(
+        tags=["Contributions"],
+        parameters=[
+            SwaggerParams.UUID,
+        ],
+    )
     def delete(self, request):
+        """
+        Delete a contribution by using its unique identifier
+        """
         query_params = request.query_params
         unique_id = query_params.get("unique_id")
         if unique_id:
